@@ -11,6 +11,8 @@ posix_src = src/libcork/posix/directory-walker.c src/libcork/posix/env.c src/lib
 			src/libcork/posix/files.c src/libcork/posix/process.c
 if !BUILD_WINCOMPAT
 posix_src += src/libcork/posix/subprocess.c src/libcork/pthreads/thread.c
+else
+posix_src += src/libcork/posix/mingw.c
 endif
 
 libcork_la_SOURCES = $(cli_src) $(core_src) $(ds_src) $(pthreads_src) $(posix_src)
