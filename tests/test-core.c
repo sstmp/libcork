@@ -1,6 +1,6 @@
 /* -*- coding: utf-8 -*-
  * ----------------------------------------------------------------------
- * Copyright © 2011-2014, RedJack, LLC.
+ * Copyright © 2011, libcork authors
  * All rights reserved.
  *
  * Please see the COPYING file in this distribution for license details.
@@ -338,7 +338,7 @@ START_TEST(test_hash)
       /* little 32 */ 0xba6bd213,
       /*    big 32 */ 0x29d175e5,
       /* little 64 */ 0xac7d28cc,
-      /*    big 64 */ 0x74bde19d);
+      /*    big 64 */ 0xac7d28cc);
     test_big_hash_buf(BUF, LEN-1,
       /* little 32 */ 0x6f02ef30550c7d68LL, 0x550c7d68550c7d68LL,
       /*    big 32 */ 0x6f02ef30550c7d68LL, 0x550c7d68550c7d68LL,
@@ -351,7 +351,7 @@ START_TEST(test_hash)
       /* little 32 */ 0x586fce33,
       /*    big 32 */ 0xe31d1ce0,
       /* little 64 */ 0xc3812fdf,
-      /*    big 64 */ 0x4d18f852);
+      /*    big 64 */ 0xc3812fdf);
     test_big_hash_buf(BUF, LEN,
       /* little 32 */ 0x98c2b52b29ab177cLL, 0x29ab177c29ab177cLL,
       /*    big 32 */ 0x98c2b52b29ab177cLL, 0x29ab177c29ab177cLL,
@@ -364,7 +364,7 @@ START_TEST(test_hash)
       /* little 32 */ 0x5caacc30,
       /*    big 32 */ 0x88f94165,
       /* little 64 */ 0xcbdc2092,
-      /*    big 64 */ 0x03578c96);
+      /*    big 64 */ 0x5935f90a);
     test_big_hash_buf(LONG_BUF, LONG_LEN-1,
       /* little 32 */ 0x4240d5134fb7793cLL, 0xee7e281c799f335aLL,
       /*    big 32 */ 0xab564a5e029c92a4LL, 0x0bd80c741093400fLL,
@@ -377,7 +377,7 @@ START_TEST(test_hash)
       /* little 32 */ 0x5e37d33d,
       /*    big 32 */ 0x4977421a,
       /* little 64 */ 0xe89ec005,
-      /*    big 64 */ 0x8c919559);
+      /*    big 64 */ 0xf00a12ab);
     test_big_hash_buf(LONG_BUF, LONG_LEN,
       /* little 32 */ 0x63bcdcd0c2615146LL, 0x8e7fd7aaece3cab6LL,
       /*    big 32 */ 0x250b47cda3fc07fdLL, 0x840c4bb606aafbd0LL,
@@ -389,14 +389,14 @@ START_TEST(test_hash)
       /* little 32 */ 0x6bb65380,
       /*    big 32 */ 0x6bb65380,
       /* little 64 */ 0x061fecc8,
-      /*    big 64 */ 0x7e1b3998);
+      /*    big 64 */ 0x5b3f7a70);
 
     test_stable_hash_var(stable_val64, 0x4d5c4063);
     test_hash_var(val64,
       /* little 32 */ 0x4d5c4063,
       /*    big 32 */ 0xbaeee6e9,
       /* little 64 */ 0xb119ee69,
-      /*    big 64 */ 0x267305fb);
+      /*    big 64 */ 0x2304b12d);
 }
 END_TEST
 
@@ -781,255 +781,6 @@ END_TEST
 
 
 /*-----------------------------------------------------------------------
- * 128-bit integers
- */
-
-static void
-test_one_u128_decimal(cork_u128 value, const char *expected)
-{
-    char  buf[CORK_U128_DECIMAL_LENGTH];
-    const char  *actual = cork_u128_to_decimal(buf, value);
-    fail_unless_streq("Integers", expected, actual);
-}
-
-static void
-test_one_u128_hex(cork_u128 value, const char *expected)
-{
-    char  buf[CORK_U128_HEX_LENGTH];
-    const char  *actual = cork_u128_to_hex(buf, value);
-    fail_unless_streq("Integers", expected, actual);
-}
-
-static void
-test_one_u128_padded_hex(cork_u128 value, const char *expected)
-{
-    char  buf[CORK_U128_HEX_LENGTH];
-    const char  *actual = cork_u128_to_padded_hex(buf, value);
-    fail_unless_streq("Integers", expected, actual);
-}
-
-static void
-test_one_u128_print_from_32(uint32_t i0, uint32_t i1, uint32_t i2, uint32_t i3,
-                            const char *expected_decimal,
-                            const char *expected_hex,
-                            const char *expected_padded_hex)
-{
-    cork_u128  value = cork_u128_from_32(i0, i1, i2, i3);
-    test_one_u128_decimal(value, expected_decimal);
-    test_one_u128_hex(value, expected_hex);
-    test_one_u128_padded_hex(value, expected_padded_hex);
-}
-
-static void
-test_one_u128_print_from_64(uint64_t i0, uint64_t i1,
-                            const char *expected_decimal,
-                            const char *expected_hex,
-                            const char *expected_padded_hex)
-{
-    cork_u128  value = cork_u128_from_64(i0, i1);
-    test_one_u128_decimal(value, expected_decimal);
-    test_one_u128_hex(value, expected_hex);
-    test_one_u128_padded_hex(value, expected_padded_hex);
-}
-
-START_TEST(test_u128_print)
-{
-    DESCRIBE_TEST;
-    test_one_u128_print_from_32(
-        0, 0, 0, 0,
-        "0",
-        "0",
-        "00000000000000000000000000000000"
-    );
-    test_one_u128_print_from_32(
-        0, 0, 0, 2,
-        "2",
-        "2",
-        "00000000000000000000000000000002"
-    );
-    test_one_u128_print_from_32(
-        0, 0, 0, 20,
-        "20",
-        "14",
-        "00000000000000000000000000000014"
-    );
-    test_one_u128_print_from_32(
-        0, 0, 0, 0xffffffff,
-        "4294967295",
-        "ffffffff",
-        "000000000000000000000000ffffffff"
-    );
-    test_one_u128_print_from_32(
-        0, 0, 1, 0,
-        "4294967296",
-        "100000000",
-        "00000000000000000000000100000000"
-    );
-    test_one_u128_print_from_32(
-        0, 0, 0xffffffff, 0xffffffff,
-        "18446744073709551615",
-        "ffffffffffffffff",
-        "0000000000000000ffffffffffffffff"
-    );
-    test_one_u128_print_from_32(
-        0, 1, 0, 0,
-        "18446744073709551616",
-        "10000000000000000",
-        "00000000000000010000000000000000"
-    );
-    test_one_u128_print_from_64(
-        0, 0,
-        "0",
-        "0",
-        "00000000000000000000000000000000"
-    );
-    test_one_u128_print_from_64(
-        0, 2,
-        "2",
-        "2",
-        "00000000000000000000000000000002"
-    );
-    test_one_u128_print_from_64(
-        0, 20,
-        "20",
-        "14",
-        "00000000000000000000000000000014"
-    );
-    test_one_u128_print_from_64(
-        0, UINT64_C(0xffffffffffffffff),
-        "18446744073709551615",
-        "ffffffffffffffff",
-        "0000000000000000ffffffffffffffff"
-    );
-    test_one_u128_print_from_64(
-        1, 0,
-        "18446744073709551616",
-        "10000000000000000",
-        "00000000000000010000000000000000"
-    );
-}
-END_TEST
-
-
-static void
-test_one_u128_add(uint64_t i0, uint64_t i1, uint64_t j0, uint64_t j1,
-                  const char *expected)
-{
-    cork_u128  value1 = cork_u128_from_64(i0, i1);
-    cork_u128  value2 = cork_u128_from_64(j0, j1);
-    cork_u128  sum = cork_u128_add(value1, value2);
-    test_one_u128_decimal(sum, expected);
-}
-
-START_TEST(test_u128_add)
-{
-    DESCRIBE_TEST;
-    test_one_u128_add(0, 0, 0, 0, "0");
-    test_one_u128_add(0, 1, 0, 1, "2");
-    test_one_u128_add(0, 1, 0, 0xffffffff, "4294967296");
-    test_one_u128_add(0, 1, 0xffffffffffffffffLL, 0xffffffffffffffffLL, "0");
-}
-END_TEST
-
-
-static void
-test_one_u128_sub(uint64_t i0, uint64_t i1, uint64_t j0, uint64_t j1,
-                  const char *expected)
-{
-    cork_u128  value1 = cork_u128_from_64(i0, i1);
-    cork_u128  value2 = cork_u128_from_64(j0, j1);
-    cork_u128  diff = cork_u128_sub(value1, value2);
-    test_one_u128_decimal(diff, expected);
-}
-
-START_TEST(test_u128_sub)
-{
-    DESCRIBE_TEST;
-    test_one_u128_sub(0, 0, 0, 0, "0");
-    test_one_u128_sub(0, 1, 0, 1, "0");
-    test_one_u128_sub(0, 2, 0, 1, "1");
-    test_one_u128_sub(0, UINT64_C(0x100000000), 0, 1, "4294967295");
-    test_one_u128_sub(1, 0, 0, 1, "18446744073709551615");
-    test_one_u128_sub(0, 1, 0, 2, "340282366920938463463374607431768211455");
-}
-END_TEST
-
-
-#define test_u128_cmp(op, op_str, v1, v2, expected) \
-    do { \
-        bool  actual = cork_u128_##op((v1), (v2)); \
-        fail_unless(actual == (expected), \
-                    "%" PRIu64 ":%" PRIu64 \
-                    " should %sbe " op_str " " \
-                    "%" PRIu64 ":%" PRIu64, \
-                    cork_u128_be64((v1), 0), cork_u128_be64((v1), 1), \
-                    (expected)? "": "not ", \
-                    cork_u128_be64((v2), 0), cork_u128_be64((v2), 1)); \
-    } while (0)
-
-static void
-test_one_u128_eq(uint64_t i0, uint64_t i1, uint64_t j0, uint64_t j1,
-                 bool expected)
-{
-    cork_u128  value1 = cork_u128_from_64(i0, i1);
-    cork_u128  value2 = cork_u128_from_64(j0, j1);
-    test_u128_cmp(eq, "==", value1, value2, expected);
-    test_u128_cmp(ne, "!=", value1, value2, !expected);
-}
-
-START_TEST(test_u128_eq)
-{
-    DESCRIBE_TEST;
-    test_one_u128_eq(0, 0, 0, 0, true);
-    test_one_u128_eq(0, 0, 0, 1, false);
-    test_one_u128_eq(0, 2, 0, 1, false);
-    test_one_u128_eq(0, 1, 0, UINT64_C(0x100000000), false);
-    test_one_u128_eq(0, UINT64_C(0x100000000), 0, UINT64_C(0x100000000), true);
-}
-END_TEST
-
-static void
-test_one_u128_lt(uint64_t i0, uint64_t i1, uint64_t j0, uint64_t j1,
-                 bool expected)
-{
-    cork_u128  value1 = cork_u128_from_64(i0, i1);
-    cork_u128  value2 = cork_u128_from_64(j0, j1);
-    test_u128_cmp(lt, "<",  value1, value2, expected);
-    test_u128_cmp(ge, ">=", value1, value2, !expected);
-}
-
-START_TEST(test_u128_lt)
-{
-    DESCRIBE_TEST;
-    test_one_u128_lt(0, 0, 0, 0, false);
-    test_one_u128_lt(0, 0, 0, 1, true);
-    test_one_u128_lt(0, 2, 0, 1, false);
-    test_one_u128_lt(0, 1, 0, UINT64_C(0x100000000), true);
-}
-END_TEST
-
-static void
-test_one_u128_gt(uint64_t i0, uint64_t i1, uint64_t j0, uint64_t j1,
-                 bool expected)
-{
-    cork_u128  value1 = cork_u128_from_64(i0, i1);
-    cork_u128  value2 = cork_u128_from_64(j0, j1);
-    test_u128_cmp(gt, ">",  value1, value2, expected);
-    test_u128_cmp(le, "<=", value1, value2, !expected);
-}
-
-START_TEST(test_u128_gt)
-{
-    DESCRIBE_TEST;
-    test_one_u128_gt(0, 0, 0, 0, false);
-    test_one_u128_gt(0, 1, 0, 0, true);
-    test_one_u128_gt(0, 1, 0, 2, false);
-    test_one_u128_gt(0, UINT64_C(0x100000000), 0, 1, true);
-}
-END_TEST
-
-
-/*-----------------------------------------------------------------------
  * Statement expressions
  */
 
@@ -1115,15 +866,6 @@ test_suite()
     tcase_add_test(tc_timestamp, test_timestamp);
     tcase_add_test(tc_timestamp, test_timestamp_format);
     suite_add_tcase(s, tc_timestamp);
-
-    TCase  *tc_u128 = tcase_create("u128");
-    tcase_add_test(tc_u128, test_u128_print);
-    tcase_add_test(tc_u128, test_u128_add);
-    tcase_add_test(tc_u128, test_u128_sub);
-    tcase_add_test(tc_u128, test_u128_eq);
-    tcase_add_test(tc_u128, test_u128_lt);
-    tcase_add_test(tc_u128, test_u128_gt);
-    suite_add_tcase(s, tc_u128);
 
     TCase  *tc_statement_expr = tcase_create("statement_expr");
     tcase_add_test(tc_statement_expr, test_statement_expr);
