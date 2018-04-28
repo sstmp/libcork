@@ -13,3 +13,7 @@ RELEASE-VERSION
 
 !.travis.yml
 !.travis/
+
+CMakeCache.txt
+CMakeFiles/
+
